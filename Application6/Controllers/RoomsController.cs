@@ -9,9 +9,26 @@ namespace Application6.Controllers;
     public class RoomsController: ControllerBase 
     {
         [HttpGet]
-        public ActionResult<List<Room>> GetAll()
+        public ActionResult<List<Room>> GetAll(
+            [FromQuery] int?  minCapacity,
+            [FromQuery] bool? hasProjector,
+            [FromQuery] bool? isActive)
         {
             var rooms = Database.DataStore.Rooms.AsEnumerable();
+            if (minCapacity.HasValue)
+            {
+                rooms = rooms.Where(r => r.Capacity >= minCapacity.Value);
+            }
+
+            if (hasProjector.HasValue)
+            {
+                rooms = rooms.Where(r => r.HasProjector == hasProjector.Value);
+            }
+
+            if (isActive.HasValue)
+            {
+                rooms = rooms.Where(r => r.IsActive == isActive.Value);
+            }
 
             return Ok(rooms.ToList());
         }
@@ -44,6 +61,26 @@ namespace Application6.Controllers;
                 .ToList();
 
             return Ok(room);
+        }
+
+        [HttpPut("{id:int}")]
+        public ActionResult<Room> UpdateRoom(int id, Room newRoom)
+        {
+            var room = Database.DataStore.Rooms.FirstOrDefault(r => r.Id == id);
+            if (room == null)
+            {
+                return NotFound($"Room with this {id} id was not found");
+            }
+            
+            room.Id = Database.DataStore.NextRoomId;
+            room.Name = newRoom.Name;
+            room.Capacity = newRoom.Capacity;
+            room.Floor = newRoom.Floor;
+            room.BuildingCode = newRoom.BuildingCode;
+            room.HasProjector = newRoom.HasProjector;
+            room.IsActive = newRoom.IsActive;
+            
+            return  Ok(room);
         }
         
         

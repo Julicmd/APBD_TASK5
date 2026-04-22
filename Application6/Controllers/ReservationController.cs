@@ -53,5 +53,38 @@ public class ReservationController: ControllerBase
         
         return Ok(reservation);
     }
-    
+
+    [HttpDelete("{id:int}")]
+    public ActionResult<Reservation> DeleteReservation(int id)
+    {
+        var reservation = Database.DataStore.Reservations
+            .FirstOrDefault(re=> re.Id == id);
+        if (reservation == null)
+        {
+            return NotFound("Reservation not found 404");
+        }
+        Database.DataStore.Reservations.Remove(reservation);
+        
+        return Ok(reservation);
+    }
+
+    [HttpPut("{id:int}")]
+    public ActionResult<Reservation> UpdateReservation(int id, Reservation newReservation)
+    {
+        var reserve = Database.DataStore.Reservations.FirstOrDefault(re=> re.Id == id);
+        if (reserve == null)
+        {
+            return NotFound("Reservation not found 404");
+        }
+
+        reserve.RoomId = newReservation.RoomId;
+        reserve.OrganizerName = newReservation.OrganizerName;
+        reserve.Topic = newReservation.Topic;
+        reserve.Date = newReservation.Date;
+        reserve.StartTime = newReservation.StartTime;
+        reserve.EndTime = newReservation.EndTime;
+        reserve.Status = newReservation.Status;
+        
+        return Ok(reserve);
+    }
 }

@@ -72,7 +72,6 @@ namespace Application6.Controllers;
                 return NotFound($"Room with this {id} id was not found");
             }
             
-            room.Id = Database.DataStore.NextRoomId;
             room.Name = newRoom.Name;
             room.Capacity = newRoom.Capacity;
             room.Floor = newRoom.Floor;

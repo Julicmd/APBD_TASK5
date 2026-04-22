@@ -82,6 +82,20 @@ namespace Application6.Controllers;
             
             return  Ok(room);
         }
+
+        [HttpDelete("{id:int}")]
+        public ActionResult<Room> DeleteRoom(int id)
+        {
+            var room =  Database.DataStore.Rooms.FirstOrDefault(r => r.Id == id);
+            if (room == null)
+            {
+                return NotFound($"Room with this {id} id was not found");
+            }
+
+            Database.DataStore.Rooms.Remove(room);
+            
+            return Ok(room);
+        }
         
         
         
